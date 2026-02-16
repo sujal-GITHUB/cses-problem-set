@@ -1,69 +1,43 @@
-//  ██████╗  ██╗  ██╗ ████████╗ █████╗  ██╗     
-// ██╔════╝  ██║  ██║     ██║  ██╔══██╗ ██║     
-// ╚█████╗   ██║  ██║     ██║  ███████║ ██║     
-//  ╚═══██╗  ██║  ██║ ██╗ ██║  ██╔══██║ ██║     
-// ██████╔╝  ╚█████╔╝╚█████╔╝  ██║  ██║ ███████╗
-// ╚═════╝     ╚════╝  ╚════╝   ╚═╝  ╚═╝ ╚══════╝
-
 #include <bits/stdc++.h>
 using namespace std;
 
 using ll = long long;
-using vi = vector<int>;
-using vll = vector<ll>;
 
-template<typename T> void ip(T &x){ cin >> x; }
-template<typename T> void ip(vector<T> &v){ for(auto &x : v) cin >> x; }
+const long long mod = 1e9+7;
+ll n, x;
 
-ll n, m;
-static const int mod = 1e9+7;
+void solve() {
+    cin >> n >>x;
+    vector<ll>h(n), s(n);
 
-void solve(){
-    cin>>n>>m;
-    vector<ll>v(n);
-
-    for(auto &x: v)
+    for(auto &x: h)
     cin>>x;
 
-    vector<vector<ll>>dp(n+1, vector<ll>(m+1, 0));
-    if(v[0] == 0){
-        for(int x=1; x<=m; x++)
-            dp[0][x] = 1;
-    } 
-    else{
-        dp[0][v[0]] = 1;
-    }
+    for(auto &x: s)
+    cin>>x;
 
-    for(int i=1; i<n; i++){
-        for(int x=1; x<=m; x++){
-            if(v[i] == 0 || v[i] == x){
-                dp[i][x] = dp[i-1][x];
+    vector<vector<int>>dp(n+1, vector<int>(x+1, 0));
 
-                if(x-1 >= 1)
-                    dp[i][x] = (dp[i][x] + dp[i-1][x-1]) % mod;
+    for(int i=n-1; i>=0; i--){
+        for(int m=0; m<=x; ++m){
+            int skip = dp[i+1][m];
+            int pick = -1e8;
 
-                if(x+1 <= m)
-                    dp[i][x] = (dp[i][x] + dp[i-1][x+1]) % mod;
+            if(m-h[i] >= 0){
+                pick = s[i] + dp[i+1][m-h[i]];
             }
+
+            dp[i][m] = max(pick, skip);
         }
     }
 
-    ll ans = 0;
-    for(int x=1; x<=m; x++)
-        ans = (ans + dp[n-1][x]) % mod;
-
-    cout<<ans;
+    cout<<dp[0][x];
 }
 
-
-int main(){
-    ios_base::sync_with_stdio(false);
+int main() {
+    ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    ll t = 1;
-
-    while(t--) 
-    solve();
-
-    return 0;
+    int t = 1;
+    while (t--) solve();
 }
